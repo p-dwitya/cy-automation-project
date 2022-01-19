@@ -23,3 +23,39 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('searchInput', (veggies) => { 
+
+    cy.get('.search-keyword').type(veggies)
+    cy.wait(2000)
+
+})
+
+Cypress.Commands.add('assertPrice', (veggies, productList) => {
+    for(let i=0; i<productList.length; i++){
+        if(productList[i].name.includes(veggies)) {
+            cy.get('.product-price').should('contain', productList[i].price)
+            cy.get('.product-name').should('contain', veggies)
+        }
+    }
+})
+
+Cypress.Commands.add('assetCartPrice', (veggies, productList, el) => {
+    let itemPrices = []
+    let totalPrice = 0
+    for(let i=0; i<productList.length; i++){
+        if(productList[i].name.includes(veggies[0])|productList[i].name.includes(veggies[1])) {
+            itemPrices.push(productList[i].price)
+            cy.log(itemPrices)
+        }
+    }
+    for (let j=0; j<itemPrices.length; j++){
+        totalPrice = totalPrice+itemPrices[j]
+        cy.log(totalPrice)
+    }
+
+    cy.log(el)
+
+    cy.wrap(el).should('have.text', totalPrice)
+
+})
